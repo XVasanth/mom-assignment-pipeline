@@ -1,0 +1,30 @@
+# Never commit credentials or sensitive data
+.env
+*.env
+secrets.json
+credentials.json
+service-account.json
+
+# Never commit your API keys or Course IDs
+# These are stored in Apps Script Properties — not in files
+GROQ_API_KEY
+COURSE_ID
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Node (if you ever add tooling)
+node_modules/
+package-lock.json
