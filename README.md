@@ -122,12 +122,33 @@ Your API key and Course ID are stored securely in Script Properties — they are
 | Property Name | Value | Where to find it |
 |---|---|---|
 | `GROQ_API_KEY` | `gsk_xxxxxxxxxxxx` | From Step 1 |
-| `COURSE_ID` | `123456789` | From your Classroom URL |
+| `COURSE_ID` | `863385955779` | From the `listMyCourses` function — see below |
 
-**Finding your COURSE_ID:**
-- Open Google Classroom → your course
-- Look at the URL: `classroom.google.com/c/XXXXXXXXX`
-- The number after `/c/` is your Course ID — copy only the number
+**Finding your COURSE_ID — do this, not the URL:**
+
+> ⚠️ **Do NOT copy the Course ID from the browser URL.** Google encodes the URL — what appears in the address bar (e.g., `ODYzMzg1OTU1Nzc5`) is Base64 encoded and will cause a "Requested entity was not found" error. Always get the numeric ID using the method below.
+
+1. Add this temporary function to the **bottom** of your `Code.gs` and run it:
+
+```javascript
+function listMyCourses() {
+  const response = Classroom.Courses.list({ pageSize: 20 });
+  const courses  = response.courses;
+  if (!courses || courses.length === 0) {
+    Logger.log("No courses found. Make sure you are a TEACHER of the course.");
+    return;
+  }
+  courses.forEach(c => {
+    Logger.log(`Name: ${c.name}  |  ID: ${c.id}  |  State: ${c.courseState}`);
+  });
+}
+```
+
+2. Run `listMyCourses` from the function dropdown
+3. Check the Execution log — find your course by name
+4. Copy the **numeric ID** printed next to it (e.g., `863385955779`)
+5. Paste that numeric ID as the value for `COURSE_ID` in Script Properties
+6. You can delete the `listMyCourses` function from the code after this
 
 4. Click **Save script properties**
 
@@ -307,7 +328,10 @@ To adapt for a different engineering course, edit `CONFIG.COURSE_NAME` in `Code.
 → Go to Project Settings (gear icon) → Script Properties → confirm the property is named exactly `GROQ_API_KEY` with no spaces.
 
 **"COURSE_ID not found"**
-→ Confirm the property is named exactly `COURSE_ID` and the value contains only the number from your Classroom URL — no extra characters.
+→ Confirm the property is named exactly `COURSE_ID` and the value contains only the numeric ID — no extra characters.
+
+**Classroom API error: "Requested entity was not found" even with correct-looking ID**
+→ The ID copied from the browser URL is Base64 encoded and will not work. The URL shows something like `ODYzMzg1OTU1Nzc5` but the API needs the numeric ID like `863385955779`. Run `listMyCourses()` (see Step 5) to get the correct numeric ID, then update Script Properties.
 
 **Authorization dialog does not appear**
 → You may have already authorized. Check Execution log — if you see an error about permissions, go to Project Settings → re-authorize under OAuth scopes.
